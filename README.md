@@ -93,17 +93,6 @@ python validate.py --model_path weights/MFDL.pth \
 
 `weights/MFDL.pth` is the released checkpoint (2.0M parameters, 8.0 MB).
 
-## Results (paper)
-
-Mean Acc / AP over each benchmark group; MFDL is trained on ProGAN only.
-
-| Benchmark | Test generators | Mean Acc | Mean AP |
-| --- | --- | --- | --- |
-| GAN | CycleGAN, StyleGAN, StyleGAN2, BigGAN, ProGAN, StarGAN, AttGAN, RelGAN (8) | 96.5 | 99.6 |
-| Diffusion | DALL·E, LDM200, LDM100, PNDM, DDPM, Glide, SDv4, VQDiffusion, Guided (9) | 92.6 | 92.1 |
-| DiffusionForensics | ADM, DDPM, IDDPM, LDM, PNDM, VQDiffusion, SDv1, SDv2 (8) | 95.1 | 99.6 |
-| GenImage | BigGAN, Wukong, VQDM, Glide, Midjourney, ADM, SDv5 (7) | 88.1 | 95.5 |
-
 
 
 ## Citation

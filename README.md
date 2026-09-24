@@ -18,33 +18,6 @@ does not capture a comprehensive frequency-domain representation of AI-generated
 both generalized and discriminative frequency representations by combining the **Discrete Wavelet
 Transform (DWT)** and the **FFT** in a dual-branch architecture:
 
-* **FRC — Frequency Representation Consistency.** Applies the FFT and a **high-pass filter** that
-  suppresses the low-frequency band (where real and generated images are similar) while keeping the
-  high-frequency details where manipulation traces live. A **complex convolution** then operates on the
-  real and imaginary components of the FFT features, preserving the frequency representation and capturing
-  global frequency patterns.
-* **FRE — Frequency Representation Enhancement.** Uses the **DWT (db3, 3 levels)** for multi-scale local
-  frequency features and applies a **multi-granularity enhancement** that amplifies the high-frequency
-  sub-bands (HL/LH/HH) at every level (α = 2). The enhanced representation is reconstructed with the IDWT
-  and refined by a point-wise convolution + ReLU, which highlights fine-grained artifacts such as chaotic
-  background textures.
-* **Fusion.** The two complementary representations are summed and passed through a ResNet stage block
-  (`f_re = ResNet(f'_D + f'_h)`), and the detector is trained with the binary cross-entropy loss.
-
-Trained only on ProGAN images, MFDL reaches **93.2% mean accuracy across 32 generative models**
-(GAN and Diffusion) with 2.0M parameters.
-
-## Paper components ↔ code
-
-| Paper | Code |
-| --- | --- |
-| FRC: FFT + high-pass filter | `MFDL.hfreqWH` (zeroes the central low-frequency region, i.e. \|u\| < W/4, \|v\| < H/4), `MFDL.hfreqC` (additional channel-dimension high-pass) |
-| FRC: complex convolution (Eqs. 3–5) | `ComplexConv2d` — separate real/imaginary 1×1 kernels `(K_r, K_i)`; `real' = real*K_r − imag*K_i`, `imag' = real*K_i + imag*K_r`, recombined as a complex tensor |
-| FRE: DWT, db3, multi-scale | `MFDL.dwt` / `MFDL.idwt` — `DWTForward(J=3, wave='db3')` / `DWTInverse(wave='db3')` |
-| FRE: α = 2 high-frequency enhancement + IDWT | `MFDL.dwtscale(yh, 2)` applied to the high-frequency sub-bands before `self.idwt((yl, yh))` |
-| FRE: point-wise conv + ReLU | `weightdw1..4` / `biasdw1..4` (1×1 convs) applied to the reconstructed features |
-| Fusion + ResNet stage block | `x = dwtx + x`, then `maxpool`, `layer1`, `layer2`, `avgpool`, `fc1` (`Bottleneck`, layers `[3, 4]`) |
-| BCE objective | `networks/MFDLtrainer.py` → `nn.BCEWithLogitsLoss()` |
 
 ## Repository layout
 
@@ -129,18 +102,7 @@ Mean Acc / AP over each benchmark group; MFDL is trained on ProGAN only.
 | DiffusionForensics | ADM, DDPM, IDDPM, LDM, PNDM, VQDiffusion, SDv1, SDv2 (8) | 95.1 | 99.6 |
 | GenImage | BigGAN, Wukong, VQDM, Glide, Midjourney, ADM, SDv5 (7) | 88.1 | 95.5 |
 
-Ablation on the two modules (mean accuracy over 32 models):
 
-| FRE | FRC | Mean Acc |
-| --- | --- | --- |
-| ✕ | ✕ | 63.4 |
-| ✓ | ✕ | 87.6 |
-| ✕ | ✓ | 89.5 |
-| ✓ | ✓ | 93.2 |
-
-Complex convolution is only beneficial in the FFT branch: 93.2% when used in FRC alone, 88.7% in both
-branches, 86.6% in FRE alone, 90.4% without it. On the same 32 datasets MFDL reaches 93.2% mean
-accuracy with 2.0M parameters (59.8 ms per image).
 
 ## Citation
 

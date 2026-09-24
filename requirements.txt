@@ -1,0 +1,13 @@
+torch>=2.0
+torchvision
+pytorch_wavelets
+numpy
+scipy
+scikit-learn
+Pillow
+tqdm
+opencv-python
+# used by test.py (image-level robustness test)
+transformers
+accelerate
+torchmetrics

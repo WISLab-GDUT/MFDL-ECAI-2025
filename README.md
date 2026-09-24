@@ -1,3 +1,4 @@
+
 # MFDL: Multi-Perspective Frequency Domain Learning for Generalizable AI-Generated Image Detection
 
 Official code for the ECAI 2025 paper:
@@ -17,6 +18,7 @@ Most frequency-based detectors extract forgery traces with the Fast Fourier Tran
 does not capture a comprehensive frequency-domain representation of AI-generated images. **MFDL** learns
 both generalized and discriminative frequency representations by combining the **Discrete Wavelet
 Transform (DWT)** and the **FFT** in a dual-branch architecture:
+<img width="715" height="365" alt="截屏2026-09-24 18 54 06" src="https://github.com/user-attachments/assets/d8ad1d07-4b7f-4394-8123-78812e17617b" />
 
 
 ## Repository layout
